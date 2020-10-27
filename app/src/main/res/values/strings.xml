@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">IntentsLearning</string>
+    <string name="login_appTitle">Plants Thirsty Make Drink</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="textView_login_forgotPassword">Forgot Password?</string>
+    <string name="login_login">Login</string>
+    <string name="login_signUp">Sign up</string>
+</resources>
