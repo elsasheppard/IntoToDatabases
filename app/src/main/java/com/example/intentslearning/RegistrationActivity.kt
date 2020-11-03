@@ -15,6 +15,8 @@ class RegistrationActivity : AppCompatActivity() {
         // to "check the mail", we get the Intent that started this Activity by just using Intent
         // "open the mail" by getting the extra from that Intent
         val username = intent.getStringExtra(LoginActivity.EXTRA_USERNAME)
+        // toast needs activity it's in, message, and length to display
+        // TODO: fill in the username field with whatever was in the Intent
         Toast.makeText(this, username , Toast.LENGTH_SHORT).show()
     }
 }

@@ -9,8 +9,11 @@ class LoginActivity : AppCompatActivity() {
 
     // similar to what we did in the stopwatch with the bundle
     // to access public constants in other classes, you ave to put them in a companion object
+    // without static in kotlin, this is how we make the variable accessible without creating an instance of the object
     companion object {
         val EXTRA_USERNAME = "username"     // to help us remember what the key is
+        // put the request code constant here
+        val LOGIN_INFO = "login_info"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +28,12 @@ class LoginActivity : AppCompatActivity() {
             // create an Intent to that will launch the Registration Activity
             // Intent needs to know where you are coming from, and where you are going
             // FileName::class.java gives you access to the class location for the Intent
-            val registrationIntent = Intent(this, RegistrationActivity::class.java)
+            val registrationIntent = Intent(this, RegistrationActivity::class.java).apply {
+                // on this Intent, put extra
+                // store that username in an "extra" in that Intent
+                // another key-value pair
+                putExtra(EXTRA_USERNAME, username)
+            }
 
             // store that username in an "extra" in that Intent
             // another key-value pair
@@ -35,4 +43,9 @@ class LoginActivity : AppCompatActivity() {
             startActivity(registrationIntent)
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
 }
