@@ -13,7 +13,7 @@ class LoginActivity : AppCompatActivity() {
     companion object {
         val EXTRA_USERNAME = "username"     // to help us remember what the key is
         // put the request code constant here
-        val LOGIN_INFO = "login_info"
+        val REQUEST_LOGIN_INFO = 1001
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,15 +37,21 @@ class LoginActivity : AppCompatActivity() {
 
             // store that username in an "extra" in that Intent
             // another key-value pair
-            registrationIntent.putExtra(EXTRA_USERNAME, username)
+            // registrationIntent.putExtra(EXTRA_USERNAME, username)
 
             // launch the new Activity
-            startActivity(registrationIntent)
+            startActivityForResult(registrationIntent, REQUEST_LOGIN_INFO)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REQUEST_LOGIN_INFO) {
+            if (resultCode == RESULT_OK) {
+                editText_login_username.setText(data?.getStringExtra(RegistrationActivity.EXTRA_USERNAME))
+                editText_login_password.setText(data?.getStringExtra(RegistrationActivity.EXTRA_PASSWORD))
+            }
+        }
     }
 
 }
