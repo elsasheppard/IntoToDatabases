@@ -3,6 +3,12 @@ package com.example.intentslearning
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import com.backendless.Backendless
+import com.backendless.BackendlessUser
+import com.backendless.async.callback.AsyncCallback
+import com.backendless.exceptions.BackendlessFault
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -14,11 +20,57 @@ class LoginActivity : AppCompatActivity() {
         val EXTRA_USERNAME = "username"     // to help us remember what the key is
         // put the request code constant here
         val REQUEST_LOGIN_INFO = 1001
+        val TAG = "LoginActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        // initialize backendless
+        Backendless.initApp(this, Constants.APP_ID, Constants.API_KEY);
+
+        // make the backendless call to login when they click the login button
+        button_login_login.setOnClickListener {
+            // extract the username and password from the edittexts
+            val username = editText_login_username.text.toString()
+            val password = editText_login_password.text.toString()
+
+            // any place in the documentation you see new AsyncCallback<Blah>,
+            // the kotlin version is object : AsyncCallback<Blah> {}
+            Backendless.UserService.login(
+                username,
+                password,
+                object : AsyncCallback<BackendlessUser> {
+                    override fun handleResponse(response: BackendlessUser?) {
+                        // ?. is the same as doing if(blah != null) { // then do that function or access var }
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "${response?.userId} has logged in",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        // bring the user to a new activity that's the "home" activity
+                        // in this case, the GradeListActivity
+                        val gradeListIntent = Intent(this@LoginActivity, GradeListActivity::class.java)
+                        startActivity(gradeListIntent)
+                        // to close the login screen so it's not there when they click back
+                        finish()
+                    }
+
+                    override fun handleFault(fault: BackendlessFault?) {
+                        Toast.makeText(this@LoginActivity, "Something went wrong. Check the logs.", Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, "handleFault: " + fault?.message)
+                    }
+                }
+            )
+        }
+
+
+
+
+
+
+
 
         // make an onClickListener for the sign up button
         button_login_signup.setOnClickListener {
