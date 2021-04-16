@@ -10,9 +10,7 @@ data class Grade (
     var percentage : Double = 1.0,
     var studentName : String = "Default Student",
     var subject : String = "Default Subject",
-    var objectId : String = "",
-    var ownerId : String = ""
-        )
-{
-
+    var objectId : String? = null,
+    var ownerId : String? = null
+){
 }
