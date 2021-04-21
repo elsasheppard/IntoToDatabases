@@ -1,4 +1,4 @@
-package com.example.intentslearning
+    package com.example.intentslearning
 
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +17,7 @@ class GradeListActivity : AppCompatActivity() {
     }
 
     private lateinit var userId : String
+    private var gradesList : List<Grade?>? = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +76,8 @@ class GradeListActivity : AppCompatActivity() {
                     override fun handleResponse(foundGrades: List<Grade?>?) {
                         // the "foundGrade" collection now contains instances of the Grade class.
                         // each instance represents an object stored on the server.
+                        gradesList = foundGrades
                         Log.d(TAG, "handleResponse :" + foundGrades.toString())
-
                     }
 
                     override fun handleFault(fault: BackendlessFault) {
@@ -96,11 +97,66 @@ class GradeListActivity : AppCompatActivity() {
         button_gradeList_create.setOnClickListener() {
             createNewGrade()
         }
+
+        button_gradeList_update.setOnClickListener() {
+            updateFirstGrade()
+        }
+
+        button_gradeList_delete.setOnClickListener() {
+            deleteFirstGrade()
+        }
+    }
+
+    private fun deleteFirstGrade() {
+        if(!gradesList.isNullOrEmpty()) {
+            // make the backendless call to delete the first item in the list
+            // get the first item
+            val grade = gradesList?.get(0)
+            // make the backendless call
+            Backendless.Data.of(Grade::class.java).remove(grade,
+                object : AsyncCallback<Long?> {
+                    override fun handleResponse(response: Long?) {
+                        Log.d(TAG, "handleResponse: item deleted at $response")
+                        // Contact has been deleted. The response is the
+                        // time in milliseconds when the object was deleted
+                    }
+
+                    override fun handleFault(fault: BackendlessFault) {
+                        // an error has occurred, the error code can be
+                        // retrieved with fault.getCode()
+                        Log.d(TAG, "handleFault: ${fault.message}")
+                    }
+                }
+            )
+        }
+    }
+
+    private fun updateFirstGrade() {
+        if(!gradesList.isNullOrEmpty()) {
+            // get the first item in the list
+            val grade = gradesList?.get(0)
+            grade?.assignment = "new and improved updated item"
+
+            Backendless.Data.of(Grade::class.java).save(grade, object : AsyncCallback<Grade?> {
+                override fun handleResponse(response: Grade?) {
+                    Toast.makeText(this@GradeListActivity, "Grade Saved", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun handleFault(fault: BackendlessFault) {
+                    // an error has occurred, the error code can be retrieved with fault.getCode()
+                    Log.d(TAG, "handleFault: ${fault.message}")
+                }
+            })
+        }
     }
 
     private fun createNewGrade() {
         Log.d(TAG, "createNewGrade: $userId")
-        val grade = Grade(assignment = "Chapter 5 Multiple Choice", studentName = "Alden", ownerId = userId)
+        val grade = Grade(
+            assignment = "Chapter 5 Multiple Choice",
+            studentName = "Alden",
+            ownerId = userId
+        )
         grade.ownerId = userId
         Log.d(TAG, "createNewGrade: ")
         
